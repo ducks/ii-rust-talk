@@ -519,7 +519,7 @@ cargo doc --open
 
 ### Documenting Contained Items
 
-These doc comments are main used for documenting the lib or main module as a
+These doc comments are mainly used for documenting the lib or main module as a
 whole.
 
 ```
@@ -626,7 +626,7 @@ println!("The value of number is: {}", number);
 
 ---
 
-### Loop (loop-a-doop-a-doop)
+### Loop (loop-a-doop-a-doop) *
 
 `loop` executes a block of code over and over and over again until you force it
 to stop.
@@ -963,12 +963,12 @@ calls the `drop` function and cleans up the heap memory for that variable.
 
 ---
 
+### *
+
 This is a problem: when `s2` and `s1` go out of scope, they will both try to free
 the same memory. This is known as a double free error and is one of the memory
 safety bugs we mentioned previously. Freeing memory twice can lead to memory
 corruption, which can potentially lead to security vulnerabilities.
-
-<!-- ownership example -->
 
 ---
 
@@ -1207,6 +1207,8 @@ fn change(some_string: &mut String) {
 
 ---
 
+### *
+
 Mutable references have one big restriction: you can have only one mutable
 reference to a particular piece of data in a particular scope. This code will
 fail:
@@ -1240,6 +1242,8 @@ from happening because it won’t even compile code with data races!
 
 ---
 
+### *
+
 ```
 let mut s = String::from("hello");
 
@@ -1268,6 +1272,8 @@ does.
 
 ---
 
+### *
+
 ```
 fn main() {
     let reference_to_nothing = dangle();
@@ -1279,8 +1285,6 @@ fn dangle() -> &String {
     &s
 }
 ```
-
-<!-- dangling reference example -->
 
 ---
 
@@ -1638,4 +1642,4 @@ let s3 = s1 + &s2; // note s1 has been moved here and can no longer be used
 ### Resources
 
 - https://doc.rust-lang.org/book/title-page.html
-- 
+- https://docs.rs
