@@ -4,13 +4,8 @@ class: invert
 paginate: true
 ---
 <style>
-  @font-face {
-    font-family: "Anka/Coder";
-    src: url("/home/sasquatch/devel/fonts/ankacoder/AnkaCoder-r.ttf");
-  }
-
   section {
-    font-family: "Anka/Coder Regular";
+    font-family: "helvetica";
   } 
   
   img { width: 100%; }
@@ -38,13 +33,14 @@ May 15, 2020
 - Hello, World
 - Common Programming Concepts (vars, types, functions, etc)
 - Ownership
+- Collections
 
 ---
 
 ## What is, Rust?
 
 A static, strongly typed and compiled language focusing on performance and
-safety, especially concerning concurrency
+safety, especially concerning concurrency and memory
 
 ---
 
@@ -86,7 +82,7 @@ Update rustup itself:
 
 ---
 
-## Howdy, y'all 
+## Howdy, y'all *
 
 ```
 fn main() {
@@ -104,7 +100,7 @@ Cargo is Rust's build system and package manager.
 
 ---
 
-## Creating a new Cargo project
+## Creating a new Cargo project *
 <!-- up_dog example -->
 
 ```
@@ -166,7 +162,7 @@ edition = "2018"
 
 ---
 
-## Variables and mutability
+## Variables and mutability *
 <!-- immutable-variables example -->
 
 ```
@@ -180,7 +176,7 @@ Rust uses conventional snake case for variable names as well as function names.
 
 ---
 
-## Variables and mutability
+## Variables and mutability *
 <!-- mutable-variables example -->
 
 Declare a mutable var by using the `mut` keyword.
@@ -255,7 +251,7 @@ let y: f32 = 3.0;
 
 ---
 
-## Numeric Operations
+## Numeric Operations *
 
 Rust supports the basic math operations you're used to: addition, subtraction,
 multiplication, division, and remainder.
@@ -405,7 +401,7 @@ fn main() {
 
 ---
 
-### Statements and Expressions
+### Statements and Expressions *
 
 This differs from other languages such as C or Ruby where assignment returns
 the value. In those languages, you can write `x = y = 6` and have both `x` and
@@ -427,7 +423,7 @@ fn main() {
 
 ---
 
-### Statements and Expressions
+### Statements and Expressions *
 
 Note the missing semicolon.
 
@@ -482,7 +478,7 @@ fn main() {
 }
 
 fn less_main() {
-    // but you should probably do this
+    // but this might be better to read 
     let two = 2;
 }
 ```
@@ -1312,6 +1308,10 @@ fn no_dangle() -> String {
 
 ### Slice type
 
+Another data type that does not have ownership is the slice. Slices let you
+reference a contiguous sequence of elements in a collection rather than the
+whole collection.
+
 Write a function that takes a string and returns the first word it finds in
 that string. If the function doesn’t find a space in the string, the whole
 string must be one word, so the entire string should be returned.
@@ -1355,3 +1355,287 @@ length value of 5.
 ![Image](./images/string-slices-1.svg#svg)
 
 ---
+
+With Rust’s .. range syntax, if you want to start at the first index (zero),
+you can drop the value before the two periods. In other words, these are equal:
+
+```
+let s = String::from("hello");
+
+let slice = &s[0..2];
+let slice = &s[..2];
+```
+
+---
+
+By the same token, if your slice includes the last byte of the String, you can
+drop the trailing number. That means these are equal:
+
+```
+let s = String::from("hello");
+
+let len = s.len();
+
+let slice = &s[3..len];
+let slice = &s[3..];
+```
+
+---
+
+You can also drop both values to take a slice of the entire string. So these
+are equal:
+
+```
+let s = String::from("hello");
+
+let len = s.len();
+
+let slice = &s[0..len];
+let slice = &s[..];
+```
+
+---
+
+```
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+```
+
+---
+
+### String Literals are Slices
+
+Recall that we talked about string literals being stored inside the binary. Now
+that we know about slices, we can properly understand string literals:
+
+---
+
+```
+let s = "Hello, world!";
+```
+
+The type of `s` here is `&str`: it’s a slice pointing to that specific point of
+the binary. This is also why string literals are immutable; `&str` is an
+immutable reference.
+
+---
+
+### String slices as Parameters
+
+Knowing that you can take slices of literals and `String` values leads us to one
+more improvement on `first_word`, and that’s its signature:
+
+```
+fn first_word(s: &String) -> &str {
+```
+
+---
+
+A more experienced Rustacean would write the signature shown below 
+instead because it allows us to use the same function on both `&String` values
+and `&str` values.
+
+```
+fn first_word(s: &str) -> &str {
+```
+
+---
+
+If we have a string slice, we can pass that directly. If we have a `String`, we
+can pass a slice of the entire `String`. Defining a function to take a string
+slice instead of a reference to a `String` makes our code more general and useful
+without losing any functionality.
+
+---
+
+String slices are special to strings but there are other types of slices.
+
+```
+
+let a = [1, 2, 3, 4, 5];
+
+let slice = &a[1..3];
+```
+
+---
+
+You will use this kind of slice for all sorts of other collections
+
+---
+
+### Collections
+
+- vectors
+- strings
+- hash maps
+
+---
+
+### Vectors
+
+A vector is of the type `Vec<T>`. 
+
+Allow you to store more than one value in a single data structure that puts all
+the values next to each other in memory.
+
+A growable array basically.
+
+They are useful when you have a list of items, such as the lines of text in a
+file or a list of players for a game.
+
+---
+
+Note that we added a type annotation here. Because we aren’t inserting any
+values into this vector, Rust doesn’t know what kind of elements we intend to
+store. This is an important point. Vectors are implemented using generics.
+
+```
+let v: Vec<i32> = Vec::new();
+```
+
+---
+
+For now, know that the `Vec<T>` type provided by the standard library can hold
+any type, and when a specific vector holds a specific type, the type is
+specified within angle brackets.
+
+---
+
+In more realistic code, Rust can often infer the type of value you want to
+store once you insert values, so you rarely need to do this type annotation.
+It’s more common to create a `Vec<T>` that has initial values, and Rust provides
+the `vec!` macro for convenience. The macro will create a new vector that holds
+the values you give it.
+
+---
+
+```
+let v = vec![1, 2, 3];
+```
+
+---
+
+### Updating a Vector
+
+```
+let mut v = Vec::new();
+
+v.push(5);
+v.push(6);
+v.push(7);
+v.push(8);
+```
+
+---
+
+### Accessing a Vector
+
+```
+let v = vec![1, 2, 3, 4, 5];
+
+let third: &i32 = &v[2];
+println!("The third element is {}", third);
+
+match v.get(2) {
+  Some(third) => println!("The third element is {}", third),
+    None => println!("There is no third element."),
+}
+
+```
+
+---
+
+### Iterating
+
+```
+let v = vec![100, 32, 57];
+
+for i in &v {
+  println!("{}", i);
+}
+```
+
+---
+
+```
+let mut v = vec![100, 32, 57];
+
+for i in &mut v {
+  *i += 50;
+}
+
+```
+
+---
+
+### Strings
+
+The `String` type, which is provided by Rust’s standard library rather than coded
+into the core language, is a growable, mutable, owned, UTF-8 encoded string
+type.
+
+```
+let mut s = String::new();
+```
+
+---
+
+```
+let data = "initial contents";
+
+let s = data.to_string();
+
+// the method also works on a literal directly:
+let s = "initial contents".to_string();
+```
+
+Available on any type that implements the `Display` trait
+
+---
+
+```
+let s = String::from("initial contents");
+```
+
+---
+
+```
+let mut s = String::from("foo");
+s.push_str("bar");
+```
+
+---
+
+### Concatenation
+
+```
+let s1 = String::from("Hello, ");
+let s2 = String::from("world!");
+let s3 = s1 + &s2; // note s1 has been moved here and can no longer be used
+```
+
+---
+
+### Things to explore on your own
+
+- structs
+- hash maps
+- enums and pattern matching
+- generics and lifetimes
+- tests
+
+---
+
+### Resources
+
+- https://doc.rust-lang.org/book/title-page.html
+- 
